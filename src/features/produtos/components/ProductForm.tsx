@@ -33,6 +33,7 @@ export function ProductForm({ visible, onClose, editingProduct = null }: Props) 
   const [costPrice, setCostPrice] = useState("");
   const [unit, setUnit] = useState<"kg" | "un">("kg");
   const [stock, setStock] = useState("");
+  const [minStock, setMinStock] = useState("");
   const [photo, setPhoto] = useState<string | undefined>();
   const [photoError, setPhotoError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -45,6 +46,7 @@ export function ProductForm({ visible, onClose, editingProduct = null }: Props) 
     setCostPrice("");
     setUnit("kg");
     setStock("");
+    setMinStock("");
     setPhoto(undefined);
     setPhotoError(null);
     setSubmitted(false);
@@ -67,6 +69,11 @@ export function ProductForm({ visible, onClose, editingProduct = null }: Props) 
       );
       setUnit(editingProduct.unit === "un" ? "un" : "kg");
       setStock(stockToInput(editingProduct));
+      setMinStock(
+        editingProduct.minStock !== undefined
+          ? String(editingProduct.minStock).replace(".", ",")
+          : "",
+      );
       setPhoto(editingProduct.photo);
       setPhotoError(null);
       setSubmitted(false);
@@ -116,6 +123,12 @@ export function ProductForm({ visible, onClose, editingProduct = null }: Props) 
     const s = parseFloat(stock.replace(",", ".")) || 0;
     const cRaw = parseFloat(costPrice.replace(",", "."));
     const c = Number.isFinite(cRaw) && cRaw > 0 ? cRaw : undefined;
+    const minRaw = parseFloat(minStock.replace(",", "."));
+    const minimum = Number.isFinite(minRaw)
+      ? unit === "un"
+        ? Math.max(0, Math.round(minRaw))
+        : +Math.max(0, minRaw).toFixed(3)
+      : undefined;
     if (!name.trim() || !p) return;
     if (editingProduct) {
       store.updateProduct(editingProduct.id, {
@@ -124,6 +137,7 @@ export function ProductForm({ visible, onClose, editingProduct = null }: Props) 
         costPrice: c,
         unit,
         stock: unit === "un" ? Math.max(0, Math.round(s)) : +Math.max(0, s).toFixed(3),
+        minStock: minimum,
         photo,
       });
     } else {
@@ -133,6 +147,7 @@ export function ProductForm({ visible, onClose, editingProduct = null }: Props) 
         costPrice: c,
         unit,
         stock: unit === "un" ? Math.max(0, Math.round(s)) : +Math.max(0, s).toFixed(3),
+        minStock: minimum,
         photo,
       });
     }
@@ -271,6 +286,15 @@ export function ProductForm({ visible, onClose, editingProduct = null }: Props) 
         value={stock}
         onChangeText={setStock}
         hint={isEdit ? "Valor atual na banca" : "Opcional"}
+      />
+
+      <Input
+        label="Estoque mínimo"
+        placeholder="Ex: 5"
+        keyboardType="decimal-pad"
+        value={minStock}
+        onChangeText={setMinStock}
+        hint="Avisaremos quando o produto chegar a este nível"
       />
 
       <Button
