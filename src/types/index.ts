@@ -4,6 +4,7 @@ export interface Product {
   price: number;
   unit: string;
   stock: number;
+  minStock?: number;
   photo?: string;
   costPrice?: number;
 }
