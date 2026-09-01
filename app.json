@@ -2,7 +2,7 @@
   "expo": {
     "name": "Dudia",
     "slug": "dudia",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/branding/DudiaL.png",
     "scheme": "dudia",
@@ -15,7 +15,7 @@
     "android": {
       "package": "com.dudia.app",
       "adaptiveIcon": {
-        "backgroundColor": "#1d4fd8",
+        "backgroundColor": "#3bb58d",
         "foregroundImage": "./assets/branding/DudiaL.png",
         "monochromeImage": "./assets/branding/DudiaL.png"
       },
@@ -33,12 +33,13 @@
     },
     "plugins": [
       "expo-router",
+      "expo-notifications",
       [
         "expo-splash-screen",
         {
           "image": "./assets/images/splash-icon.png",
           "resizeMode": "contain",
-          "backgroundColor": "#1d4fd8"
+          "backgroundColor": "#3bb58d"
         }
       ],
       [
