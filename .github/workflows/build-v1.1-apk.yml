@@ -28,9 +28,6 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Install compatible notifications module
-        run: npx expo install expo-notifications
-
       - name: Typecheck
         run: npx tsc --noEmit
 
