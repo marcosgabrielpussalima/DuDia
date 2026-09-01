@@ -19,7 +19,8 @@ export function ProductListItem({ product, lowStockThreshold, onEdit }: Props) {
   const { tokens } = useTheme();
   const styles = useMemo(() => makeStyles(tokens), [tokens]);
   const empty = product.stock <= 0;
-  const low = !empty && product.stock <= lowStockThreshold;
+  const effectiveThreshold = product.minStock ?? lowStockThreshold;
+  const low = !empty && product.stock <= effectiveThreshold;
   const tone = empty ? "danger" : low ? "warning" : "default";
   const hasCost =
     product.costPrice !== undefined && product.costPrice > 0;
@@ -40,7 +41,7 @@ export function ProductListItem({ product, lowStockThreshold, onEdit }: Props) {
           {empty ? (
             <Badge label="Sem estoque" tone="danger" />
           ) : low ? (
-            <Badge label={`${product.stock}${product.unit} · acabando`} tone="warning" />
+            <Badge label={`${product.stock}${product.unit} · mínimo ${effectiveThreshold}`} tone="warning" />
           ) : (
             <Text variant="caption" tone="subtle">
               · {product.stock}
