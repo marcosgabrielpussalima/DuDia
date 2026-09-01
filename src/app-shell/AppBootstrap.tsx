@@ -3,12 +3,14 @@ import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { initStore } from "@/src/lib/domain/store";
 import { initSettings } from "@/src/lib/storage/settings";
 import { useTheme } from "@/src/theme";
+import { useLowStockNotifications } from "@/src/hooks/useLowStockNotifications";
 
 const AppReadyContext = createContext(false);
 
 export function AppBootstrap({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
   const { tokens } = useTheme();
+  useLowStockNotifications();
 
   useEffect(() => {
     Promise.all([initStore(), initSettings()]).then(() => setReady(true));
