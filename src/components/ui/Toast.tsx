@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { Animated, Easing, StyleSheet, type ViewStyle } from "react-native";
+import { Animated, Easing, StyleSheet, type TextStyle, type ViewStyle } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme, type Tokens } from "@/src/theme";
 import { Text } from "./Text";
@@ -22,7 +22,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const [toast, setToast] = useState<ToastState | null>(null);
   const { tokens } = useTheme();
   const insets = useSafeAreaInsets();
-  const { base, tones } = useMemo(() => makeStyles(tokens), [tokens]);
+  const { base, tones, textTones } = useMemo(() => makeStyles(tokens), [tokens]);
   const opacity = useRef(new Animated.Value(0)).current;
   const translate = useRef(new Animated.Value(-20)).current;
   const counter = useRef(0);
@@ -61,7 +61,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             { top: insets.top + 12, opacity, transform: [{ translateY: translate }] },
           ]}
         >
-          <Text variant="bodyStrong" tone="inverse" numberOfLines={2}>
+          <Text variant="bodyStrong" style={textTones[toast.kind]} numberOfLines={2}>
             {toast.message}
           </Text>
         </Animated.View>
@@ -94,5 +94,11 @@ function makeStyles(t: Tokens) {
     warning: { backgroundColor: t.palette.warning },
     danger: { backgroundColor: t.palette.danger },
   };
-  return { base, tones };
+  const textTones: Record<ToastKind, TextStyle> = {
+    info: { color: t.palette.primaryForeground },
+    success: { color: t.palette.successForeground },
+    warning: { color: t.palette.warningForeground },
+    danger: { color: t.palette.dangerForeground },
+  };
+  return { base, tones, textTones };
 }

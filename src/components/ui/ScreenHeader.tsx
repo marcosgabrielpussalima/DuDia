@@ -1,8 +1,8 @@
 import { useMemo } from "react";
-import { StyleSheet, View, type ViewProps } from "react-native";
+import { Image, StyleSheet, View, type ViewProps } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme, type Tokens } from "@/src/theme";
-import { Text } from "./Text";
+import { Text } from "@/src/components/ui/Text";
 
 export interface ScreenHeaderProps extends ViewProps {
   title: string;
@@ -15,7 +15,7 @@ export interface ScreenHeaderProps extends ViewProps {
 export function ScreenHeader({
   title,
   subtitle,
-  brand = "Dudia",
+  brand,
   trailing,
   compact = false,
   style,
@@ -38,11 +38,25 @@ export function ScreenHeader({
       style={[headerStyles, { paddingTop: insets.top + verticalInset }, style]}
     >
       <View style={topRowStyles}>
+        <View style={styles.brandLockup}>
+          <Image
+            source={require("@/assets/branding/DudiaL.png")}
+            resizeMode="contain"
+            style={[styles.logo, isCompact && styles.logoCompact]}
+            accessibilityRole="image"
+            accessibilityLabel="Logo do DuDia"
+          />
+          <Text variant="heading" style={styles.wordmark}>
+            DuDia
+          </Text>
+        </View>
+        {trailing}
+      </View>
+      {brand ? (
         <Text variant="overline" style={styles.brand}>
           {brand}
         </Text>
-        {trailing}
-      </View>
+      ) : null}
       {children}
       <Text variant="title" tone="inverse" style={titleStyles}>
         {title}
@@ -84,9 +98,11 @@ function makeStyles(t: Tokens) {
       alignItems: "center",
       marginBottom: t.spacing.xs,
     },
-    brand: {
-      color: "rgba(255,255,255,0.75)",
-    },
+    brandLockup: { flexDirection: "row", alignItems: "center", gap: t.spacing.sm, flexShrink: 1 },
+    logo: { width: 44, height: 44, flexShrink: 0 },
+    logoCompact: { width: 36, height: 36 },
+    wordmark: { color: t.palette.primaryForeground, fontWeight: "900", flexShrink: 1 },
+    brand: { color: t.palette.primaryForeground, marginBottom: t.spacing.xxs },
     title: {
       color: t.palette.primaryForeground,
       fontSize: 30,
@@ -100,13 +116,13 @@ function makeStyles(t: Tokens) {
     },
     subtitle: {
       marginTop: t.spacing.xs,
-      color: "rgba(255,255,255,0.85)",
+      color: t.palette.primaryForeground,
       fontSize: 14,
       fontWeight: "600",
     },
     subtitleCompact: {
       marginTop: t.spacing.xxs,
-      color: "rgba(255,255,255,0.85)",
+      color: t.palette.primaryForeground,
       fontSize: 12,
       fontWeight: "600",
     },

@@ -48,10 +48,10 @@ export function CartBar({ total, itemCount, onCheckout, onClearCart, rightSlot }
         style={styles.sellBtn}
       >
         <View style={styles.btnContent}>
-          <Text variant="overline" tone="inverse">
+          <Text variant="overline" style={styles.buttonText}>
             Ver pedido · {itemLabel}
           </Text>
-          <Text variant="display" tone="inverse" style={styles.totalText}>
+          <Text variant="display" style={[styles.buttonText, styles.totalText]}>
             {fmtBRL(hasItems ? total : 0)}
           </Text>
         </View>
@@ -74,6 +74,7 @@ function makeStyles(t: Tokens) {
     clearBtn: { flexShrink: 0 },
     sellBtn: { flex: 1, minHeight: 60, paddingVertical: t.spacing.sm },
     btnContent: { alignItems: "center", flex: 1 },
+    buttonText: { color: t.palette.successForeground },
     totalText: { fontSize: 20, lineHeight: 24 },
   });
 }

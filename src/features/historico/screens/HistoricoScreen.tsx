@@ -140,7 +140,7 @@ export function HistoricoScreen() {
       {days.length === 0 ? (
         <View style={styles.flex}>
           <EmptyState
-            icon={<Receipt size={32} color={tokens.palette.primary} />}
+            icon={<Receipt size={32} color={tokens.palette.primaryStrong} />}
             title="Sem vendas registradas"
             description="Suas vendas aparecerão aqui agrupadas por dia."
           />

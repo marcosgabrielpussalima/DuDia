@@ -94,7 +94,7 @@ export function BalancoScreen() {
           style={({ pressed }) => [styles.dayPicker, pressed && styles.pressed]}
         >
           <View style={styles.dayPickerLeft}>
-            <CalendarDays size={16} color={tokens.palette.primary} />
+            <CalendarDays size={16} color={tokens.palette.primaryStrong} />
             <Text variant="caption" tone="primary">
               {period === "day" && selectedDate ? parseDateLabel(selectedDate) : "Escolher dia específico"}
             </Text>
