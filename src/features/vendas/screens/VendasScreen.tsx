@@ -193,16 +193,16 @@ export function VendasScreen() {
     return { gap, tileWidth };
   }, [windowWidth, tokens.spacing.lg, tokens.spacing.sm]);
 
-  const registerSale = (paymentMethod: PaymentMethod) => {
+  const registerSale = (paymentMethod: PaymentMethod): boolean => {
     const items = products
       .map((product) => ({ product, quantity: cart.order[product.id] ?? 0 }))
       .filter((item) => item.quantity > 0);
-    if (items.length === 0) return;
+    if (items.length === 0) return false;
     const unavailable = items.find((item) => item.quantity > item.product.stock);
     if (unavailable) {
       toast.show(`Estoque insuficiente: ${unavailable.product.name}`, "danger");
       feedback("err");
-      return;
+      return false;
     }
     const totalValue = +items
       .reduce((sum, item) => sum + item.product.price * item.quantity, 0)
@@ -220,10 +220,12 @@ export function VendasScreen() {
         ? `+ ${fmtBRL(totalValue)} ${saleItems[0].productName}`
         : `+ ${fmtBRL(totalValue)} (${totalQty} ${totalQty === 1 ? "item" : "itens"})`;
     store.addSale({ value: totalValue, items: saleItems, paymentMethod, label });
+    setShowCheckout(false);
     cart.clear();
     setConfirmed(true);
     feedback("ok");
     toast.show("Venda registrada", "success");
+    return true;
   };
 
   return (

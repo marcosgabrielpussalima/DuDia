@@ -1,25 +1,35 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Banknote, Check, CreditCard, QrCode, ShoppingBasket } from "lucide-react-native";
 import { BottomSheet, Button, Card, Chip, Input, Text } from "@/src/components/ui";
 import { useTheme, type Tokens } from "@/src/theme";
 import { PAYMENT_LABELS, fmtBRL } from "@/src/lib/domain/sales";
 import type { PaymentMethod } from "@/src/types";
+import { PixPaymentStep } from "@/src/features/vendas/components/PixPaymentStep";
 
 interface Props {
   visible: boolean;
   total: number;
   onClose: () => void;
-  onConfirm: (method: PaymentMethod) => void;
+  onConfirm: (method: PaymentMethod) => boolean;
 }
 
-type Step = "summary" | "payment" | "cash";
+type Step = "summary" | "payment" | "cash" | "pix";
 
 export function CheckoutSheet({ visible, total, onClose, onConfirm }: Props) {
   const { tokens } = useTheme();
   const styles = useMemo(() => makeStyles(tokens), [tokens]);
   const [step, setStep] = useState<Step>("summary");
   const [cashInput, setCashInput] = useState("");
+  const confirmedRef = useRef(false);
+
+  useEffect(() => {
+    if (!visible) {
+      setStep("summary");
+      setCashInput("");
+      confirmedRef.current = false;
+    }
+  }, [visible]);
 
   const cashReceived = parseFloat(cashInput.replace(",", ".")) || 0;
   const change = cashReceived - total;
@@ -36,8 +46,10 @@ export function CheckoutSheet({ visible, total, onClose, onConfirm }: Props) {
   };
 
   const confirm = (method: PaymentMethod) => {
-    reset();
-    onConfirm(method);
+    if (confirmedRef.current) return;
+    confirmedRef.current = true;
+    if (onConfirm(method)) reset();
+    else confirmedRef.current = false;
   };
 
   return (
@@ -48,7 +60,9 @@ export function CheckoutSheet({ visible, total, onClose, onConfirm }: Props) {
             ? "Resumo do pedido"
             : step === "payment"
               ? "Forma de pagamento"
-              : "Pagamento em dinheiro"}
+              : step === "pix"
+                ? "Pagamento via Pix"
+                : "Pagamento em dinheiro"}
         </Text>
         <Text variant="display" style={styles.total}>
           {fmtBRL(total)}
@@ -79,7 +93,7 @@ export function CheckoutSheet({ visible, total, onClose, onConfirm }: Props) {
           <PayChip
             label={PAYMENT_LABELS.pix}
             icon={<QrCode size={20} color={tokens.palette.foreground} />}
-            onPress={() => confirm("pix")}
+            onPress={() => setStep("pix")}
           />
           <PayChip
             label={PAYMENT_LABELS.credito}
@@ -98,6 +112,15 @@ export function CheckoutSheet({ visible, total, onClose, onConfirm }: Props) {
           />
           <Button label="Voltar" variant="ghost" onPress={() => setStep("summary")} />
         </View>
+      ) : step === "pix" ? (
+        visible ? (
+          <PixPaymentStep
+            key={total.toFixed(2)}
+            total={total}
+            onBack={() => setStep("payment")}
+            onConfirm={() => confirm("pix")}
+          />
+        ) : null
       ) : (
         <View style={styles.actions}>
           <Input

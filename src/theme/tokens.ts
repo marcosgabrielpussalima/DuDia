@@ -28,6 +28,8 @@ export interface Palette {
   dangerSoft: string;
   overlay: string;
   shadow: string;
+  qrForeground: string;
+  qrBackground: string;
 }
 
 export const lightPalette: Palette = {
@@ -58,6 +60,8 @@ export const lightPalette: Palette = {
   dangerSoft: "#fbdcdc",
   overlay: "rgba(8, 14, 28, 0.55)",
   shadow: "rgba(13, 26, 56, 0.12)",
+  qrForeground: "#000000",
+  qrBackground: "#ffffff",
 };
 
 export const darkPalette: Palette = {
@@ -88,6 +92,8 @@ export const darkPalette: Palette = {
   dangerSoft: "#3a1818",
   overlay: "rgba(0, 0, 0, 0.6)",
   shadow: "rgba(0, 0, 0, 0.55)",
+  qrForeground: "#000000",
+  qrBackground: "#ffffff",
 };
 
 export const spacing = {

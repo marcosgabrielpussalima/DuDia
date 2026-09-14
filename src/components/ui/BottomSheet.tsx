@@ -155,7 +155,7 @@ function makeStyles(t: Tokens) {
       paddingTop: t.spacing.sm,
       ...t.shadows.lg,
     },
-    inner: { width: "100%" },
+    inner: { width: "100%", flexShrink: 1 },
     scrollInner: {
       flexGrow: 1,
       paddingBottom: t.spacing.md,

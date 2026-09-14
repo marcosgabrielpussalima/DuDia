@@ -208,6 +208,7 @@ Se o parser não entender, use o modo **Manual** na aba Vendas ou cadastre pelo 
 - **Manual:** toque em **+** / **−** nos produtos para montar o pedido.
 - **Voz:** segure o microfone, fale um ou vários itens na mesma frase, solte; entram no carrinho.
 - **Vender** → checkout (Pix, crédito, débito, dinheiro com troco).
+- **Pix:** informe tipo/chave, nome do recebedor e cidade; gere o QR Code com o total do pedido ou copie o código. Confira o recebimento no banco e toque em **Recebi o Pix** para registrar a venda e baixar o estoque. [Detalhes e testes do Pix estático](docs/pix-estatico.md).
 - Estoque baixo aparece em destaque.
 
 ### Produtos
