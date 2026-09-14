@@ -62,7 +62,7 @@ export function PixKeyForm(props: Props) {
         onChangeText={props.onNameChange}
       />
       <Input
-        label="Cidade da venda"
+        label="Cidade"
         placeholder="Ex.: Recife"
         autoCapitalize="words"
         value={props.merchantCity}

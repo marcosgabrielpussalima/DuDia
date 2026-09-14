@@ -1,57 +1,65 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as Clipboard from "expo-clipboard";
-import { createStaticPix, type PixKeyType, type StaticPixPayment } from "@/src/lib/payments/pix";
-import { useSettings } from "@/src/lib/storage/settings";
+import type { SavedPixKey } from "@/src/lib/domain/pixKeys";
+import { createStaticPix } from "@/src/lib/payments/pix";
+import { pixKeysStore } from "@/src/lib/storage/pixKeys";
+import { currentPixPayment, type GeneratedPixPayment } from "@/src/features/vendas/logic/pixPayment";
 import { feedback } from "@/src/lib/utils/feedback";
 
-export function usePixPayment(total: number) {
-  const settings = useSettings();
-  const [keyType, setKeyType] = useState<PixKeyType>("cpf");
-  const [key, setKey] = useState("");
-  const [merchantName, setMerchantName] = useState(settings.ownerName || settings.stallName);
-  const [merchantCity, setMerchantCity] = useState("");
-  const [payment, setPayment] = useState<StaticPixPayment | null>(null);
+export function usePixPayment(total: number, keys: readonly SavedPixKey[]) {
+  const [generated, setGenerated] = useState<GeneratedPixPayment | null>(null);
   const [error, setError] = useState("");
   const [copyMessage, setCopyMessage] = useState("");
+  const payment = currentPixPayment(generated, keys, total);
+  const current = useRef(payment);
+  current.current = payment;
+  useEffect(() => () => { current.current = null; }, []);
 
-  const generate = (): boolean => {
+  const generate = (id: string): boolean => {
     setError("");
     setCopyMessage("");
     try {
-      setPayment(createStaticPix({ keyType, key, amount: total, merchantName, merchantCity }));
+      const snapshot = pixKeysStore.getSnapshot();
+      const recipient = snapshot.status === "ready" ? snapshot.keys.find((key) => key.id === id) : undefined;
+      if (!recipient) throw new Error("Esta chave Pix não está disponível. Escolha outra chave ou cadastre uma nova.");
+      const next = createStaticPix({ ...recipient, amount: total });
+      current.current = next;
+      setGenerated({ recipient, payment: next });
       feedback("ok");
       return true;
     } catch (cause) {
-      setPayment(null);
+      current.current = null;
+      setGenerated(null);
       setError(cause instanceof Error ? cause.message : "Não foi possível gerar o Pix.");
       feedback("err");
       return false;
     }
   };
 
-  const edit = () => {
-    setPayment(null);
+  const clear = () => {
+    current.current = null;
+    setGenerated(null);
     setError("");
     setCopyMessage("");
   };
 
   const copy = async () => {
-    if (!payment) return;
+    const selected = current.current;
+    if (!selected) return;
     setError("");
     setCopyMessage("");
     try {
-      const copied = await Clipboard.setStringAsync(payment.payload);
+      const copied = await Clipboard.setStringAsync(selected.payload);
+      if (current.current !== selected) return;
       if (!copied) throw new Error("clipboard_unavailable");
       setCopyMessage("Código Pix copiado.");
       feedback("ok");
     } catch {
+      if (current.current !== selected) return;
       setError("Não foi possível copiar. Você pode selecionar o código abaixo e copiá-lo.");
       feedback("err");
     }
   };
 
-  return {
-    keyType, setKeyType, key, setKey, merchantName, setMerchantName,
-    merchantCity, setMerchantCity, payment, error, copyMessage, generate, edit, copy,
-  };
+  return { payment, error, copyMessage, generate, clear, copy };
 }
