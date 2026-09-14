@@ -38,7 +38,7 @@
     "typescript": "~6.0.3"
   },
   "scripts": {
-    "test:pix": "tsc --noEmit -p tests/tsconfig.json && node --import tsx --test tests/pix.test.ts",
+    "test:pix": "tsc --noEmit -p tests/tsconfig.json && node --import tsx --test tests/pix.test.ts tests/pix-keys.test.ts",
     "start": "EXPO_UNSTABLE_HEADLESS=1 expo start",
     "android": "node scripts/verify-android-deps.js && EXPO_UNSTABLE_HEADLESS=1 expo run:android --device",
     "android:direct": "EXPO_UNSTABLE_HEADLESS=1 expo run:android --device",

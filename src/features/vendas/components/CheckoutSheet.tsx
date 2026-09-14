@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
+import { useIsFocused } from "expo-router";
 import { Banknote, Check, CreditCard, QrCode, ShoppingBasket } from "lucide-react-native";
 import { BottomSheet, Button, Card, Chip, Input, Text } from "@/src/components/ui";
 import { useTheme, type Tokens } from "@/src/theme";
@@ -17,15 +18,19 @@ interface Props {
 type Step = "summary" | "payment" | "cash" | "pix";
 
 export function CheckoutSheet({ visible, total, onClose, onConfirm }: Props) {
+  // Hide the native modal while the Pix registration page is on top, retaining this checkout's state.
+  const isFocused = useIsFocused();
   const { tokens } = useTheme();
   const styles = useMemo(() => makeStyles(tokens), [tokens]);
   const [step, setStep] = useState<Step>("summary");
+  const [pixSelecting, setPixSelecting] = useState(false);
   const [cashInput, setCashInput] = useState("");
   const confirmedRef = useRef(false);
 
   useEffect(() => {
     if (!visible) {
       setStep("summary");
+      setPixSelecting(false);
       setCashInput("");
       confirmedRef.current = false;
     }
@@ -37,6 +42,7 @@ export function CheckoutSheet({ visible, total, onClose, onConfirm }: Props) {
 
   const reset = () => {
     setStep("summary");
+    setPixSelecting(false);
     setCashInput("");
   };
 
@@ -53,7 +59,7 @@ export function CheckoutSheet({ visible, total, onClose, onConfirm }: Props) {
   };
 
   return (
-    <BottomSheet visible={visible} onClose={handleClose}>
+    <BottomSheet visible={visible && isFocused} onClose={handleClose}>
       <View style={styles.head}>
         <Text variant="overline" tone="muted">
           {step === "summary"
@@ -93,7 +99,7 @@ export function CheckoutSheet({ visible, total, onClose, onConfirm }: Props) {
           <PayChip
             label={PAYMENT_LABELS.pix}
             icon={<QrCode size={20} color={tokens.palette.foreground} />}
-            onPress={() => setStep("pix")}
+            onPress={() => { setPixSelecting(false); setStep("pix"); }}
           />
           <PayChip
             label={PAYMENT_LABELS.credito}
@@ -117,6 +123,8 @@ export function CheckoutSheet({ visible, total, onClose, onConfirm }: Props) {
           <PixPaymentStep
             key={total.toFixed(2)}
             total={total}
+            selecting={pixSelecting}
+            onSelectingChange={setPixSelecting}
             onBack={() => setStep("payment")}
             onConfirm={() => confirm("pix")}
           />

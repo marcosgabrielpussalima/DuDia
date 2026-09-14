@@ -27,6 +27,7 @@ import {
 import { useSettings, settingsStore } from "@/src/lib/storage/settings";
 import { useStore } from "@/src/lib/domain/store";
 import { useTheme, type Tokens } from "@/src/theme";
+import { PixKeysSection } from "@/src/features/perfil/components/PixKeysSection";
 
 const HELP_CARDS = {
   app: {
@@ -128,6 +129,8 @@ export function PerfilScreen() {
             leadingIcon={<Store size={18} color={tokens.palette.foregroundMuted} />}
           />
         </Card>
+
+        <PixKeysSection />
 
         <Text variant="overline" tone="muted" style={styles.section}>
           Aparência

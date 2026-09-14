@@ -9,6 +9,11 @@ export async function storageGet<T>(key: string, fallback: T): Promise<T> {
   }
 }
 
+export async function storageGetStrict<T>(key: string, fallback: T): Promise<T> {
+  const raw = await AsyncStorage.getItem(key);
+  return raw === null ? fallback : (JSON.parse(raw) as T);
+}
+
 export async function storageSet(key: string, value: unknown): Promise<void> {
   await AsyncStorage.setItem(key, JSON.stringify(value));
 }

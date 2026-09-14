@@ -1,11 +1,14 @@
 export type PixKeyType = "cpf" | "cnpj" | "phone" | "email" | "random";
 
-export interface StaticPixInput {
+export interface PixRecipientInput {
   keyType: PixKeyType;
   key: string;
-  amount: number;
   merchantName: string;
   merchantCity: string;
+}
+
+export interface StaticPixInput extends PixRecipientInput {
+  amount: number;
 }
 
 export interface StaticPixPayment {
@@ -100,6 +103,15 @@ function normalizeMerchantField(raw: string, label: string, maxLength: number): 
   return value.slice(0, maxLength).trim();
 }
 
+export function normalizePixRecipient(input: PixRecipientInput): PixRecipientInput {
+  return {
+    keyType: input.keyType,
+    key: normalizePixKey(input.key, input.keyType),
+    merchantName: normalizeMerchantField(input.merchantName, "o nome do recebedor", 25),
+    merchantCity: normalizeMerchantField(input.merchantCity, "a cidade", 15),
+  };
+}
+
 function field(id: string, value: string): string {
   if (!value.length || value.length > 99 || /[^\x20-\x7E]/.test(value)) {
     throw new Error("Não foi possível montar os dados do Pix.");
@@ -128,9 +140,7 @@ export function createStaticPix(input: StaticPixInput): StaticPixPayment {
   if (amount <= 0 || amountText.length > 13 || !/^\d+\.\d{2}$/.test(amountText)) {
     throw new Error("O total da venda está fora do valor permitido para este Pix.");
   }
-  const key = normalizePixKey(input.key, input.keyType);
-  const merchantName = normalizeMerchantField(input.merchantName, "o nome do recebedor", 25);
-  const merchantCity = normalizeMerchantField(input.merchantCity, "a cidade da venda", 15);
+  const { key, merchantName, merchantCity } = normalizePixRecipient(input);
 
   // BR Code: template 26 sem descrição (permite chave de até 77 caracteres).
   // *** indica ausência de txid; não há conciliação bancária automática neste fluxo.
