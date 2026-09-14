@@ -174,7 +174,7 @@ export function ProdutosScreen() {
       <View style={styles.body}>
         {!hasProducts ? (
           <EmptyState
-            icon={<Package size={32} color={tokens.palette.primary} />}
+            icon={<Package size={32} color={tokens.palette.primaryStrong} />}
             title="Nenhum produto cadastrado"
             description="Use o botão verde para cadastrar, o microfone para falar com o app ou Limpar estoque quando houver produtos."
           />

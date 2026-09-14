@@ -22,7 +22,7 @@ export function VoiceTutorial({ idx, total, text, onClose }: Props) {
         </Text>
         <IconButton
           label="Encerrar tutorial"
-          icon={<X size={16} color={tokens.palette.primary} />}
+          icon={<X size={16} color={tokens.palette.primaryStrong} />}
           tone="primary"
           size={40}
           onPress={onClose}

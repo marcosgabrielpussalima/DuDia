@@ -30,7 +30,7 @@ function makeStyles(t: Tokens) {
     default: { color: t.palette.foreground },
     muted: { color: t.palette.foregroundMuted },
     subtle: { color: t.palette.foregroundSubtle },
-    primary: { color: t.palette.primary },
+    primary: { color: t.palette.primaryStrong },
     success: { color: t.palette.success },
     danger: { color: t.palette.danger },
     warning: { color: t.palette.warning },

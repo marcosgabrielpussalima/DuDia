@@ -55,7 +55,7 @@ function makeStyles(t: Tokens) {
     },
     initial: {
       fontWeight: "900",
-      color: t.palette.primary,
+      color: t.palette.primaryStrong,
     },
   });
 }

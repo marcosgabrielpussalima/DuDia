@@ -137,7 +137,7 @@ function makeStyles(t: Tokens) {
     },
     ghost: {
       container: { backgroundColor: "transparent" },
-      text: { color: t.palette.primary },
+      text: { color: t.palette.primaryStrong },
     },
     success: {
       container: { backgroundColor: t.palette.success, ...t.shadows.sm },

@@ -201,14 +201,14 @@ export function ProductForm({ visible, onClose, editingProduct = null }: Props) 
               label="Galeria"
               variant="secondary"
               size="sm"
-              icon={<ImagePlus size={14} color={tokens.palette.primary} />}
+              icon={<ImagePlus size={14} color={tokens.palette.primaryStrong} />}
               onPress={() => pickPhoto("library")}
             />
             <Button
               label="Câmera"
               variant="secondary"
               size="sm"
-              icon={<Camera size={14} color={tokens.palette.primary} />}
+              icon={<Camera size={14} color={tokens.palette.primaryStrong} />}
               onPress={() => pickPhoto("camera")}
             />
           </View>
